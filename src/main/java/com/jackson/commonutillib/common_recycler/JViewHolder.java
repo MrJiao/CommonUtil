@@ -1,5 +1,6 @@
 package com.jackson.commonutillib.common_recycler;
 
+import android.content.Entity;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -72,6 +73,10 @@ public class JViewHolder extends RecyclerView.ViewHolder {
         ImageView iv = get(id);
         iv.setImageResource(resId);
         return this;
+    }
+
+    public CommonEntity getEntity(){
+        return entity;
     }
 
     //返回监听时间的view，如果id 等于 ITEM_VIEW则返回itemView
