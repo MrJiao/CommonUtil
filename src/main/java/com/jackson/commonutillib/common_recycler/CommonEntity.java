@@ -6,7 +6,7 @@ package com.jackson.commonutillib.common_recycler;
  * Details :
  */
 public abstract class CommonEntity {
-    public static final int ALL_TYPE =0;
+    public static final int ALL_TYPE =14324650;
 
     public int getViewType(){
         return ALL_TYPE;
@@ -17,4 +17,5 @@ public abstract class CommonEntity {
     protected abstract void setView(JViewHolder holder, int position);
 
     protected void onRecycle(JViewHolder holder){}
+
 }

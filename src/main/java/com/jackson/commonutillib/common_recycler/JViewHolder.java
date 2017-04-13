@@ -1,6 +1,5 @@
 package com.jackson.commonutillib.common_recycler;
 
-import android.content.Entity;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.MotionEvent;
