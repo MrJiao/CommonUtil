@@ -156,7 +156,6 @@ public class JViewHolder extends RecyclerView.ViewHolder {
         @Override
         public boolean onLongClick(View view) {
             return listener.onLongClick(entity, getLayoutPosition(), JViewHolder.this, getItemViewType(), view);
-
         }
     }
 
