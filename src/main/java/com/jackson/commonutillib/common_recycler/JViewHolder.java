@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by Jackson on 2017/4/6.
  * Version : 1
@@ -16,26 +18,22 @@ import android.widget.TextView;
  */
 public class JViewHolder extends RecyclerView.ViewHolder {
 
-    private final SparseArray<View> viewSparseArray;
-    private final View itemView;
-    private CommonEntity entity;
-    private final ViewGroup viewGroup;
+    private SparseArray<View> viewSparseArray;
+    private View itemView;
+    private ViewGroup viewGroup;
+    private List<CommonEntity> entities;
 
-    public JViewHolder(View itemView, ViewGroup parent) {
+    public JViewHolder(View itemView, ViewGroup parent, List<CommonEntity> entities) {
         super(itemView);
         this.itemView = itemView;
         this.viewSparseArray = new SparseArray<>();
         this.viewGroup = parent;
+        this.entities = entities;
     }
 
-    public static JViewHolder newInstance(View itemView, ViewGroup parent) {
-        return new JViewHolder(itemView, parent);
+    public static JViewHolder newInstance(View itemView, ViewGroup parent, List<CommonEntity> entities) {
+        return new JViewHolder(itemView, parent,entities);
     }
-
-    void bingEntity(CommonEntity entity) {
-        this.entity = entity;
-    }
-
 
     public <T extends View> T get(int id) {
         View view = viewSparseArray.get(id);
@@ -72,10 +70,6 @@ public class JViewHolder extends RecyclerView.ViewHolder {
         ImageView iv = get(id);
         iv.setImageResource(resId);
         return this;
-    }
-
-    public CommonEntity getEntity(){
-        return entity;
     }
 
     //返回监听时间的view，如果id 等于 ITEM_VIEW则返回itemView
@@ -129,6 +123,10 @@ public class JViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    void bindEntities(List<CommonEntity> entities) {
+        this.entities = entities;
+    }
+
     private class OnClickListener implements View.OnClickListener {
 
         private final CommonAdapter.OnClickListener onClickListener;
@@ -141,7 +139,7 @@ public class JViewHolder extends RecyclerView.ViewHolder {
         public void onClick(View view) {
             final int position = getLayoutPosition();
             if (position < 0) return;
-            onClickListener.onClick(entity, position, JViewHolder.this, getItemViewType(), view);
+            onClickListener.onClick(entities.get(position), position, JViewHolder.this, getItemViewType(), view);
         }
     }
 
@@ -155,7 +153,9 @@ public class JViewHolder extends RecyclerView.ViewHolder {
 
         @Override
         public boolean onLongClick(View view) {
-            return listener.onLongClick(entity, getLayoutPosition(), JViewHolder.this, getItemViewType(), view);
+            final int layoutPosition = getLayoutPosition();
+            return listener.onLongClick(entities.get(layoutPosition), layoutPosition, JViewHolder.this, getItemViewType(), view);
+
         }
     }
 
@@ -170,6 +170,9 @@ public class JViewHolder extends RecyclerView.ViewHolder {
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
+            if(MotionEvent.ACTION_DOWN==motionEvent.getAction()){
+                entity = entities.get(getLayoutPosition());
+            }
             return onTouchListener.onTouch(entity, JViewHolder.this, view, motionEvent, getItemViewType());
         }
     }

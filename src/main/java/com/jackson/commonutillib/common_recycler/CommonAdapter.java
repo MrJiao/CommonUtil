@@ -22,7 +22,9 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
 
     public CommonAdapter(Context context, List<CommonEntity> beans){
         this.mContext = context;
-        this.mEntities = beans;
+        this.mEntities = new ArrayList<>();
+        if(beans!=null)
+            this.mEntities.addAll(beans);
     }
 
     private ListenerControl getListenerControl(){
@@ -31,7 +33,6 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
         }
         return listenerControl;
     }
-
 
     private int getItemViewTypePosition;
     @Override
@@ -43,7 +44,7 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
     @Override
     public JViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = View.inflate(mContext, mEntities.get(getItemViewTypePosition).getLayout(), null);
-        JViewHolder holder = JViewHolder.newInstance(itemView, parent);
+        JViewHolder holder = JViewHolder.newInstance(itemView, parent,mEntities);
         if(listenerControl!=null){
             holder.setViewTypeListeners(listenerControl.getViewTypeListeners(CommonEntity.ALL_TYPE));
             if(viewType!=CommonEntity.ALL_TYPE)
@@ -55,14 +56,14 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
     @Override
     public void onBindViewHolder(JViewHolder holder, int position) {
         final CommonEntity commonEntity = mEntities.get(position);
-        holder.bingEntity(commonEntity);
+        holder.bindEntities(mEntities);
         commonEntity.setView(holder,position);
     }
 
     @Override
     public void onViewRecycled(JViewHolder holder) {
         super.onViewRecycled(holder);
-        holder.getEntity().onRecycle(holder);
+        mEntities.get(holder.getLayoutPosition()).onRecycle(holder);
     }
 
     @Override
@@ -70,6 +71,12 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
         return mEntities ==null?0: mEntities.size();
     }
 
+    public void setEntities(List<? extends CommonEntity> entities) {
+        this.mEntities.clear();
+        if(entities != null){
+            this.mEntities.addAll(entities);
+        }
+    }
 
     public void setOnClickListener(OnClickListener listener){
         setOnClickListener(CommonEntity.ALL_TYPE,listener);
@@ -95,7 +102,6 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
         getListenerControl().setOnLongClickListener(id,viewType,listener);
     }
 
-
     public void setOnTouchListener(OnTouchListener listener){
         setOnTouchListener(CommonEntity.ALL_TYPE, listener);
     }
@@ -104,13 +110,8 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
         setOnTouchListener(ListenerControl.ALL_ID,viewType,listener);
     }
 
-    private OnTouchListener onTouchListener;
     public void setOnTouchListener(int id,int viewType,OnTouchListener listener){
         getListenerControl().setOnTouchListener(id,viewType,listener);
-    }
-
-    public void setEntities(List<CommonEntity> entities) {
-        this.mEntities = entities;
     }
 
     public interface  OnClickListener  {
@@ -128,7 +129,6 @@ public class CommonAdapter extends RecyclerView.Adapter<JViewHolder> {
     public List<CommonEntity> getEntities(){
         return mEntities==null?new ArrayList<CommonEntity>(0):mEntities;
     }
-
 
     public void itemMoved(int fromPosition, int toPosition){
         final int size = getEntities().size();
